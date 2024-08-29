@@ -3,6 +3,7 @@ package com.example.calculator
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.calculator.databinding.ActivityMainBinding
 
@@ -34,7 +35,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun equalsAction(view: View){
-        binding.resultTV.text = calculateResults()
+        val result = calculateResults()
+        binding.resultTV.text =result
+        Toast.makeText(this, "Hasil perhitungan: $result", Toast.LENGTH_SHORT).show()
     }
 
     private fun calculateResults(): String {
@@ -63,7 +66,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        return result
+        return if (result is Int) result else result.toString().toFloat()
     }
 
     private fun timesDivisionCalculate(passedList: MutableList<Any>): MutableList<Any> {
@@ -106,20 +109,24 @@ class MainActivity : AppCompatActivity() {
         return newList
     }
 
-    private fun digitOperators(): MutableList<Any> {
+    private fun digitOperators(): MutableList<Any>
+    {
         val list = mutableListOf<Any>()
         var currentDigit = ""
-        for (character in binding.prevTV.text) {
-            if (character.isDigit())
+        for(character in binding.prevTV.text)
+        {
+            if(character.isDigit() || character == '.')
                 currentDigit += character
-            else {
-                list.add(currentDigit.toInt())
+            else
+            {
+                list.add(currentDigit.toFloat())
                 currentDigit = ""
                 list.add(character)
             }
         }
-        if(currentDigit.isNotEmpty())
-            list.add(currentDigit.toInt())
+
+        if(currentDigit != "")
+            list.add(currentDigit.toFloat())
 
         return list
     }
